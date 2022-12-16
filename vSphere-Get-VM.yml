@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Gather all registered virtual machines
+      vmware_vm_info:
+        validate_certs: false
+      delegate_to: localhost
+      register: vms
+    - name: Gather facts for vm summary
+      vmware_guest_info:
+        datacenter: **********
+        validate_certs: false
+        name: "{{ item.guest_name }}"
+      delegate_to: localhost
+      register: result
+      loop: "{{ vms.virtual_machines }}"
+      loop_control:
+        label: "{{ item.guest_name }}"
+    - name: output file
+      local_action:
+        module: copy
+        content: "{{ result }}"
+        dest: "/var/lib/awx/projects/GitLab/vcenter-get-vm/vCenter_info.json"
