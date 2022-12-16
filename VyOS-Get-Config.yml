@@ -1,0 +1,14 @@
+---
+- hosts: VyOS_All
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Config Backup
+      vyos_command:
+        commands:
+          - show configuration commands
+      register: result
+    - name: save config to file
+      copy:
+        content: "{{ result.stdout[0]}}"
+        dest: "/var/lib/awx/projects/GitLab/vyos-get-config/{{ inventory_hostname }}.txt"
