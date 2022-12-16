@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Create VyOS
+      vmware_guest:
+        name: "{{hostname}}"
+        hostname: ***********
+        username: administrator@vsphere.local
+        password: ***********
+        datacenter: ***********
+        folder: /***********/vm/***********/VyOS
+        validate_certs: false
+        template: "/***********/vm/***********/VyOS_kitting/VyOS-template-1.2.6-s1-VLAN{{template}}"
+        state: poweredon
+        cluster: ***********
+        disk:
+        - size_gb: 2
+          type: thin
+          autoselect_datastore: True
+        hardware:
+          memory_mb: 512
+          num_cpus: 1
+        networks:
+        - name: "{{nw_adp1}}"
+          device_type: vmxnet3
+          start_connected: true
+        - name: "{{nw_adp2}}"
+          device_type: vmxnet3
+          start_connected: true
+      delegate_to: localhost
