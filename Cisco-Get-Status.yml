@@ -1,0 +1,17 @@
+---
+- hosts: Cisco_All
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Config Backup
+      ios_command:
+        commands:
+          - show int status
+        authorize: true
+        auth_pass: **********
+        timeout: 30
+      register: result
+    - name: save config to file
+      copy:
+        content: "{{ result.stdout[0]}}"
+        dest: "/var/lib/awx/projects/GitLab/cisco-get-status/{{ inventory_hostname }}.txt"
